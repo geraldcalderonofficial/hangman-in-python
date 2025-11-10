@@ -1,53 +1,71 @@
+# Hangman
 
+import hangman_art as art
+import hangman_words as words
 import random
 
-from hangman_words import word_list
-word_length = len(chosen_word)
 
-lives = 6
+def get_guess():
+    while True:
+        g = input("Guess a letter: ").lower()
+        # repeated guesses of the same letter should not count as a "bad" guess
+        if g in guessed_letter_list:
+            print(f"You have already guessed the letter \"{g}\".")
+        # make sure the guess is a single character
+        elif g not in letter_list:
+            print("The guess has to be a single letter. Please try again.")
+        else:
+            # "return" will also break out the infinite loop, just like "break"
+            return g
 
-from hangman_art import logo, stages
-print(logo)
 
-# print(f"Psst, the solution is  {chosen_word}.")
+# typing a whole list of all letters manually is tedious, so just making one from a simple string
+letter_list = list("abcdefghijklmnopqrstuvwxyz")
+# to store letters that have already been guessed
 
+# the display list, fill it with "_" for each character
 display = []
-for _ in range(word_length):
-    display += "_"
+for i in range(len(chosen_word)):
 
-while not end_of_game:
-    guess = input("Guess a letter: ").lower()
+# set conditions to break out of main loop
+game_over = False
+is_winner = False
 
-    if guess in display:
-        print(f"You've already guess {guess}")
+print(art.logo)
+# print(f"Pssst, the solution is \"{''.join(chosen_word)}\".")
 
-    for position in range(word_length):
-        # print(f"Current position: {position}\n Current letter: {letter}\n Guessed letter: {guess}")
-              
-        if letter == guess:
-            display[position] = letter
-    
-    if guess not in chosen_word:
-        print(f"You guessed {guess}, that's not in the word. You lose a life.")
+while not game_over:
+    # get the input, using a function to make the code more readable
+    guess = get_guess()
+
+    # add the letter to the "guessed" list
+    guessed_letter_list.append(guess)
+
+    # evaluate the guess, and update the display list if needed
+    good_guess = False
+    for i in range(len(chosen_word)):
+        if chosen_word[i] == guess:
+            display[i] = guess
+            # set to True if there was at least one match
+            good_guess = True
+
+    if good_guess:
+        # check for win condition
+        # count the "_" in the display list, none means all characters have been guessed already
+        if display.count("_") == 0:
+            is_winner = True
+            game_over = True
+    else:
+        print(f"The letter \"{guess}\" is not in the word. You lose a life.")
+        # check for game over condition
         if lives == 0:
-            end_of_game = True
-            print("You lose.")
-    
-    print(f"{' '.join(display)}")
+            game_over = True
 
-    if "_" not in display:
-        end_of_game = True
-        print("You win.")
-    
-    print(stages[lives])
+    # print the display list as a string and the corresponding "art"
+    print(art.stages[lives])
 
-    
-
-
-
-
-
-
-
-
-
+# after game over, print the final result
+if is_winner:
+    print("You win!")
+else:
+    print("Game over.")
