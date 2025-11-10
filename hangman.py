@@ -4,7 +4,6 @@ import hangman_art as art
 import hangman_words as words
 import random
 
-
 def get_guess():
     while True:
         g = input("Guess a letter: ").lower()
@@ -17,7 +16,6 @@ def get_guess():
         else:
             # "return" will also break out the infinite loop, just like "break"
             return g
-
 
 # typing a whole list of all letters manually is tedious, so just making one from a simple string
 letter_list = list("abcdefghijklmnopqrstuvwxyz")
